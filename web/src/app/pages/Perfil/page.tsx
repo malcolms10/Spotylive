@@ -5,7 +5,8 @@ import Sidebar from "@/components/Sidebar"
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation'
 import { api } from "@/app/lib/api";
-import { Play, Turtle } from "lucide-react";
+import { baseURL } from "@/app/lib/api";
+import { ListPlus, PenLine, Play, Turtle } from "lucide-react";
 
 
 export default function Perfil() {
@@ -72,6 +73,12 @@ export default function Perfil() {
         localStorage.setItem("midia",id)
         router.push('/pages/ViewMidia')
     }
+
+    const handleEdit = (event, id) => {
+        event.stopPropagation();
+        localStorage.setItem("midia", id);
+        router.push('/pages/Update');
+    };
 
     useEffect(() => {
         const storedData = localStorage.getItem("user");
@@ -140,34 +147,46 @@ export default function Perfil() {
                             <h2 className="font-semibold text-2xl mt-10">Músicas</h2>
                             <div className="grid grid-cols-3 gap-4 mt-4">
                                 {musicas.map(musica=>{ 
+
+                                const [c, d] = musica.capa.split("uploads/");
+
                                     return(
-                                        <div key={musica.id} className="bg-white/10 rounded overflow-hidden flex items-center gap-4 hover:bg-white/20 transition-colors">
-                                            <img src={musica.capa} alt={musica.titulo} className="w-32 h-24"/>
-                                            <div className="flex items-center gap-16">
-                                                <div>
-                                                    <strong className="text-base">{musica.titulo}</strong>
-                                                    <p className="text-sm">{musica.autor}</p>
+                                        <div key={musica.id} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10 w-48 justify-center">
+                                            <img src={`${baseURL}/uploads/${d}`} alt={musica.titulo} className="w-[160px] h-[120px] ml-2 rounded-lg"/> 
+                                            <div className="flex justify-between items-center">
+                                                <strong className="font-semibold">{musica.titulo}</strong>
+                                                <div className="flex items-center gap-2">
+                                                    {(adm === 'true' || musica.userId === id) && (
+                                                        <PenLine onClick={(event) => handleEdit(event, musica.id)} />
+                                                    )}
                                                 </div>
-                                                {/* Adicionando função de reprodução ao botão */}
-                                                <button className="w-10 h-10">
-                                                    <Play></Play>
-                                                </button>
-                                            </div>                                    
+                                            </div>
+                                            <span className="text-sm text-zinc-400">{musica.historia}</span>
                                         </div>
                                     )
                                 })}                                    
                             </div>
                             <h2 className="font-semibold text-2xl mt-10">Vídeos</h2>
                             <div className="grid grid-cols-3 gap-4 mt-4">
-                                {videos.map(video=>{ 
-                                    return(
-                                        <div key={video.id} onClick={()=>handleView(video.id)} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10">
-                                            <img src={video.capa} alt={video.titulo} className="w-full h-[80%]"></img>
-                                            <strong className="font-semibold">{video.titulo}</strong>
+                            {videos.map(video => {
+
+                                const [c, d] = video.capa.split("uploads/");
+
+                                return(
+                                        <div key={video.id} onClick={() => handleView(video.id)} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10">
+                                            <img src={`${baseURL}/uploads/${d}`} alt={video.titulo} className="w-full h-[220px]" />
+                                            <div className="flex justify-between items-center">
+                                                <strong className="font-semibold">{video.titulo}</strong>
+                                                <div className="flex items-center gap-2">
+                                                    {(adm === 'true' || video.userId === id) && (
+                                                        <PenLine onClick={(event) => handleEdit(event, video.id)} />
+                                                    )}
+                                                </div>
+                                            
+                                            </div>
                                             <span className="text-sm text-zinc-400">{video.historia}</span>
                                         </div>
-                                    )
-                                })}
+                                    )})}
                             </div>
                             
                         </div>

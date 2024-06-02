@@ -41,7 +41,7 @@ export default function Home() {
     };
 
     const handlePlay = async (id) => {
-        setVisible(true)
+        setVisible(!visible)
         
             await api.get(`midias/${id}`).
             then(async response => {
@@ -258,7 +258,7 @@ export default function Home() {
                                                     </div>
                                                 </div>
                                             </dialog>
-                                            <img src={`${baseURL}/uploads/${d}`} alt={video.titulo} className="w-full h-[80%]" />
+                                            <img src={`${baseURL}/uploads/${d}`} alt={video.titulo} className="w-full h-[220px]" />
                                             <div className="flex justify-between items-center">
                                                 <strong className="font-semibold">{video.titulo}</strong>
                                                 <div className="flex items-center gap-2">
