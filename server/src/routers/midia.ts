@@ -141,7 +141,7 @@ export async function midiasRoutes(app: FastifyInstance) {
     reply.send(midia);
   });
 
-  app.get("/midias/search/:titulo", async (request, reply) => {
+  app.get("/midias/search/titulo/:titulo", async (request, reply) => {
     const paramsSchema = z.object({
       titulo: z.string(),
     });
@@ -167,6 +167,54 @@ export async function midiasRoutes(app: FastifyInstance) {
     const midia = await prisma.midia.findMany({
       where: {
         autor,
+      },
+    });
+
+    reply.send(midia);
+  });
+
+  app.get("/midias/search/editora/:editora", async (request, reply) => {
+    const paramsSchema = z.object({
+      editora: z.string(),
+    });
+
+    const { editora } = paramsSchema.parse(request.params);
+
+    const midia = await prisma.midia.findMany({
+      where: {
+        editora,
+      },
+    });
+
+    reply.send(midia);
+  });
+
+  app.get("/midias/search/grupo/:grupo", async (request, reply) => {
+    const paramsSchema = z.object({
+      grupo: z.string(),
+    });
+
+    const { grupo } = paramsSchema.parse(request.params);
+
+    const midia = await prisma.midia.findMany({
+      where: {
+        grupo,
+      },
+    });
+
+    reply.send(midia);
+  });
+
+  app.get("/midias/search/compositor/:compositor", async (request, reply) => {
+    const paramsSchema = z.object({
+      compositor: z.string(),
+    });
+
+    const { compositor } = paramsSchema.parse(request.params);
+
+    const midia = await prisma.midia.findMany({
+      where: {
+        compositor,
       },
     });
 

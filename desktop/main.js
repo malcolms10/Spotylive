@@ -4,7 +4,7 @@ const { ipcMain } = require("electron/main");
 const { setStore } = require("./settings");
 function createMainWindow() {
   const mainWindow = new BrowserWindow({
-    title: "ISPTUBE",
+    title: "Spotify",
     width: 1000,
     height: 600,
     webPreferences: {
