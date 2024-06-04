@@ -230,6 +230,7 @@ export default function Perfil() {
                                             <div key={playlist.id} className="text-gray-100">
                                                 <div className="ml-4 pl-2 mt-2 border-b-2">
                                                     {playlist.nome}
+                                                    
                                                 </div>                                    
                                             </div>
                                         )
@@ -237,7 +238,6 @@ export default function Perfil() {
                                     }    
                                 </>
                             }       
-                            
                             
                         </div>
                         

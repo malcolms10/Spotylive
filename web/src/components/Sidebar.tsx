@@ -18,7 +18,7 @@ export default function Sidebar() {
         <aside className="w-[20%] bg-zinc-950 p-6">
             <nav className="space-y-4 mb-5 pb-5 border-b border-zinc-800">
                 <a href="/pages/Home" className="text-zinc-300 font-semibold text-sm gap-4 flex items-center"><HomeIcon></HomeIcon> Página Inicial</a>
-                <a href="" className="text-zinc-300 font-semibold text-sm gap-4 flex items-center"><Search></Search> Procurar</a>
+                <a href="/pages/Search" className="text-zinc-300 font-semibold text-sm gap-4 flex items-center"><Search></Search> Procurar</a>
                 <a href="" className="text-zinc-300 font-semibold text-sm gap-4 flex items-center"><Library></Library> Sua Biblioteca</a>
                 <a href="/pages/Radio" className="text-zinc-300 font-semibold text-sm gap-4 flex items-center"><BoomBox></BoomBox> Rádio</a>
             </nav>
