@@ -16,7 +16,7 @@ function createMainWindow() {
 
   mainWindow.webContents.openDevTools();
 
-  mainWindow.loadURL("http://localhost:3000/");
+  mainWindow.loadURL("http://192.168.100.26:3000/");
 }
 
 app.whenReady().then(() => {

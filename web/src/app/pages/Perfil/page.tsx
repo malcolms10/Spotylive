@@ -26,6 +26,20 @@ export default function Perfil() {
     const [midias, setMidias] = useState([])
     const [musicas,setMusicas] = useState([])
     const [videos,setVideos] = useState([])
+    const [playlists,setPlaylists] = useState([])
+    const [selectedOption, setSelectedOption] = useState('musicas');
+
+    const handleMusicClick = () => {
+        setSelectedOption('musicas');
+    };
+
+    const handleVideoClick = () => {
+        setSelectedOption('videos');
+    };
+
+    const handlePlaylistClick = () => {
+        setSelectedOption('playlist');
+    };
 
     function getPerfil(id) {
         api.get(`/userId/${id}`).
@@ -57,6 +71,15 @@ export default function Perfil() {
             }).catch(error => {
                 console.error('Error fetching midias:', error);
         });
+    }
+
+    async function loadPlaylists(id) {
+        
+        await api.get(`playlist/${id}`)
+        .then(async reply =>{
+            console.log(reply.data)
+            setPlaylists(reply.data)
+        })
     }
 
     function turnAdmin(str) {
@@ -91,6 +114,7 @@ export default function Perfil() {
                 const [c, d] = userDataA.data.email.split("@");
                 setEmail(c)
                 loadMidias(userDataA.data.id);
+                loadPlaylists(userDataA.data.id)
                 setUser(userDataA.data.id)
                 setAdm(userDataA.data.admin)
             }
@@ -138,58 +162,85 @@ export default function Perfil() {
                         <div className="rounded-lg bg-green-900 rounded-t-none p-[4%]">
                             <div className="flex space-x-4">
                                 <ButtonGroup>
-                                    <Button color="default" variant="shadow">Músicas</Button>
-                                    <Button color="default" variant="bordered">Vídeos</Button>
+                                    <Button color="default" variant="shadow" onClick={handleMusicClick}>Músicas</Button>
+                                    <Button color="default" variant="bordered" onClick={handleVideoClick}>Vídeos</Button>
+                                    <Button color="default" variant="shadow" onClick={handlePlaylistClick}>Playlist</Button>
                                 </ButtonGroup>
                             </div>
                             
+                            {selectedOption === 'musicas' && 
+                                <>
+                                    <h2 className="font-semibold text-2xl mt-10">Músicas</h2>
+                                        <div className="grid grid-cols-3 gap-4 mt-4">
+                                            {musicas.map(musica=>{ 
 
-                            <h2 className="font-semibold text-2xl mt-10">Músicas</h2>
-                            <div className="grid grid-cols-3 gap-4 mt-4">
-                                {musicas.map(musica=>{ 
+                                            const [c, d] = musica.capa.split("uploads/");
 
-                                const [c, d] = musica.capa.split("uploads/");
-
-                                    return(
-                                        <div key={musica.id} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10 w-48 justify-center">
-                                            <img src={`${baseURL}/uploads/${d}`} alt={musica.titulo} className="w-[160px] h-[120px] ml-2 rounded-lg"/> 
-                                            <div className="flex justify-between items-center">
-                                                <strong className="font-semibold">{musica.titulo}</strong>
-                                                <div className="flex items-center gap-2">
-                                                    {(adm === 'true' || musica.userId === id) && (
-                                                        <PenLine onClick={(event) => handleEdit(event, musica.id)} />
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <span className="text-sm text-zinc-400">{musica.historia}</span>
+                                                return(
+                                                    <div key={musica.id} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10 w-48 justify-center">
+                                                        <img src={`${baseURL}/uploads/${d}`} alt={musica.titulo} className="w-[160px] h-[120px] ml-2 rounded-lg"/> 
+                                                        <div className="flex justify-between items-center">
+                                                            <strong className="font-semibold">{musica.titulo}</strong>
+                                                            <div className="flex items-center gap-2">
+                                                                {(adm === 'true' || musica.userId === id) && (
+                                                                    <PenLine onClick={(event) => handleEdit(event, musica.id)} />
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <span className="text-sm text-zinc-400">{musica.historia}</span>
+                                                    </div>
+                                                )
+                                            })}                                    
                                         </div>
-                                    )
-                                })}                                    
-                            </div>
-                            <h2 className="font-semibold text-2xl mt-10">Vídeos</h2>
-                            <div className="grid grid-cols-3 gap-4 mt-4">
-                            {videos.map(video => {
+                                </>
+                            }
+                            
+                            {selectedOption === 'videos' && 
+                                <>
+                                    <h2 className="font-semibold text-2xl mt-10">Vídeos</h2>
+                                    <div className="grid grid-cols-3 gap-4 mt-4">
+                                        {videos.map(video => {
 
-                                const [c, d] = video.capa.split("uploads/");
+                                            const [c, d] = video.capa.split("uploads/");
 
-                                return(
-                                        <div key={video.id} onClick={() => handleView(video.id)} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10">
-                                            <img src={`${baseURL}/uploads/${d}`} alt={video.titulo} className="w-full h-[220px]" />
-                                            <div className="flex justify-between items-center">
-                                                <strong className="font-semibold">{video.titulo}</strong>
-                                                <div className="flex items-center gap-2">
-                                                    {(adm === 'true' || video.userId === id) && (
-                                                        <PenLine onClick={(event) => handleEdit(event, video.id)} />
-                                                    )}
-                                                </div>
-                                            
+                                            return(
+                                                    <div key={video.id} onClick={() => handleView(video.id)} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10">
+                                                        <img src={`${baseURL}/uploads/${d}`} alt={video.titulo} className="w-full h-[220px]" />
+                                                        <div className="flex justify-between items-center">
+                                                            <strong className="font-semibold">{video.titulo}</strong>
+                                                            <div className="flex items-center gap-2">
+                                                                {(adm === 'true' || video.userId === id) && (
+                                                                    <PenLine onClick={(event) => handleEdit(event, video.id)} />
+                                                                )}
+                                                            </div>
+                                                        
+                                                        </div>
+                                                        <span className="text-sm text-zinc-400">{video.historia}</span>
+                                                    </div>
+                                        )})}
+                                    </div>
+                                </>
+                            } 
+
+                            {selectedOption === 'playlist' && 
+                                <>
+                                    <h2 className="mt-10 mb-2 text-xl text-center">Playlists</h2>
+                                    {playlists.map(playlist=>{ 
+                                        return(
+                                            <div key={playlist.id} className="text-gray-100">
+                                                <div className="ml-4 pl-2 mt-2 border-b-2">
+                                                    {playlist.nome}
+                                                </div>                                    
                                             </div>
-                                            <span className="text-sm text-zinc-400">{video.historia}</span>
-                                        </div>
-                                    )})}
-                            </div>
+                                        )
+                                        })
+                                    }    
+                                </>
+                            }       
+                            
                             
                         </div>
+                        
                         
                     
                         

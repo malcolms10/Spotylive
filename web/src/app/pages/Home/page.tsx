@@ -1,11 +1,11 @@
 'use client'
 
-import { Avatar, AvatarIcon, Button, Checkbox, Image } from "@nextui-org/react";
+import { Avatar, AvatarIcon, Button, ButtonGroup, Checkbox, Image } from "@nextui-org/react";
 import { useEffect, useState, useRef } from "react";
 import Sidebar from "@/components/Sidebar";
 import { useRouter } from 'next/navigation';
 import { api, baseURL } from '../../lib/api';
-import { Play, ListPlus, PenLine } from "lucide-react";
+import { ListPlus, PenLine } from "lucide-react";
 
 export default function Home() {
     const router = useRouter();
@@ -28,6 +28,15 @@ export default function Home() {
     const dialogRef = useRef(null);
     const [playlists, setPlaylists] = useState([]);
     const [visible,setVisible] = useState(false)
+    const [selectedOption, setSelectedOption] = useState('musicas');
+
+    const handleMusicClick = () => {
+        setSelectedOption('musicas');
+    };
+
+    const handleVideoClick = () => {
+        setSelectedOption('videos');
+    };
 
     function handleView(id) {
         localStorage.setItem("midia", id);
@@ -166,113 +175,139 @@ export default function Home() {
                                 />
                             </div>
                         </div>
-                        <h2 className="font-semibold text-2xl mt-10">Músicas</h2>
-                        <div className="grid grid-cols-4 gap-3 mt-4">
-                            
-                            {musicas.map(musica => {
-
-                                const [c, d] = musica.capa.split("uploads/");
-
-                                return(
-                                        <div key={musica.id} onClick={() => handlePlay(musica.id)} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10 w-48 justify-center">
-                                            <dialog ref={dialogRef} className="w-[20%] rounded-lg p-[2%]">
-                                                <div className="space-y-4 space-x-4 p-[2%]">
-                                                    <div className="flex flex-col gap-3">
-                                                        {playlists.map(playlist => (
-                                                            <div key={playlist.id} className="text-gray-100">
-                                                                <div className="ml-4 pl-2 mt-2 border-b-2">
-                                                                    <Checkbox
-                                                                        value={playlist.id}
-                                                                        isSelected={selectedPlaylists.includes(playlist.id)}
-                                                                        onChange={() => handleCheckboxChange(playlist.id)}
-                                                                    >
-                                                                        {playlist.nome}
-                                                                    </Checkbox>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                        <div className="flex items-center justify-between">
-                                                            <Button color="success" variant="bordered" onClick={fecharPopUp}>
-                                                                Cancelar
-                                                            </Button>
-                                                            <Button color="success" variant="bordered" onClick={() => {
-                                                                selectedPlaylists.forEach(playlistId => handleAdicionarMidia(playlistId, musica.id));
-                                                                fecharPopUp();
-                                                            }}>
-                                                                Adicionar
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </dialog>
-                                            <img src={`${baseURL}/uploads/${d}`} alt={musica.titulo} className="w-[160px] h-[120px] ml-2 rounded-lg"/> 
-                                            <div className="flex justify-between items-center">
-                                                <strong className="font-semibold">{musica.titulo}</strong>
-                                                <div className="flex items-center gap-2">
-                                                    <ListPlus onClick={abrirPopUp} />
-                                                    {(adm === 'true' || musica.userId === id) && (
-                                                        <PenLine onClick={(event) => handleEdit(event, musica.id)} />
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <span className="text-sm text-zinc-400">{musica.historia}</span>
-                                        </div>
-                                    )})}
-                        </div>
-                        <h2 className="font-semibold text-2xl mt-10">Vídeos</h2>
-                        <div className="grid grid-cols-3 gap-4 mt-4">
-                            
-                            {videos.map(video => {
-
-                                const [c, d] = video.capa.split("uploads/");
-
-                                return(
-                                        <div key={video.id} onClick={() => handleView(video.id)} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10">
-                                            <dialog ref={dialogRef} className="w-[20%] rounded-lg p-[2%]">
-                                                <div className="space-y-4 space-x-4 p-[2%]">
-                                                    <div className="flex flex-col gap-3">
-                                                        {playlists.map(playlist => (
-                                                            <div key={playlist.id} className="text-gray-100">
-                                                                <div className="ml-4 pl-2 mt-2 border-b-2">
-                                                                    <Checkbox
-                                                                        value={playlist.id}
-                                                                        isSelected={selectedPlaylists.includes(playlist.id)}
-                                                                        onChange={() => handleCheckboxChange(playlist.id)}
-                                                                    >
-                                                                        {playlist.nome}
-                                                                    </Checkbox>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                        <div className="flex items-center justify-between">
-                                                            <Button color="success" variant="bordered" onClick={fecharPopUp}>
-                                                                Cancelar
-                                                            </Button>
-                                                            <Button color="success" variant="bordered" onClick={() => {
-                                                                selectedPlaylists.forEach(playlistId => handleAdicionarMidia(playlistId, video.id));
-                                                                fecharPopUp();
-                                                            }}>
-                                                                Adicionar
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </dialog>
-                                            <img src={`${baseURL}/uploads/${d}`} alt={video.titulo} className="w-full h-[220px]" />
-                                            <div className="flex justify-between items-center">
-                                                <strong className="font-semibold">{video.titulo}</strong>
-                                                <div className="flex items-center gap-2">
-                                                    <ListPlus onClick={abrirPopUp} />
-                                                    {(adm === 'true' || video.userId === id) && (
-                                                        <PenLine onClick={(event) => handleEdit(event, video.id)} />
-                                                    )}
-                                                </div>
+                        <div className="flex flex-col items-center space-y-4 mt-4">
+                            <ButtonGroup>
+                                <Button color="default" variant="shadow" onClick={handleMusicClick}>
+                                    Músicas
+                                </Button>
+                                <Button color="default" variant="bordered" onClick={handleVideoClick}>
+                                    Vídeos
+                                </Button>
+                            </ButtonGroup>
+                            <div className="mt-4">
+                            {selectedOption === 'musicas' && 
+                                    
+                                    <>
+                                        <h2 className="font-semibold text-2xl mt-10">Músicas</h2>
+                                        <div className="grid grid-cols-3 gap-4 mt-4">
                                             
-                                            </div>
-                                            <span className="text-sm text-zinc-400">{video.historia}</span>
+                                            {musicas.map(musica => {
+
+                                                const [c, d] = musica.capa.split("uploads/");
+
+                                                return(
+                                                        <div key={musica.id} onClick={() => handlePlay(musica.id)} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10">
+                                                            <dialog ref={dialogRef} className="w-[20%] rounded-lg p-[2%]">
+                                                                <div className="space-y-4 space-x-4 p-[2%]">
+                                                                    <div className="flex flex-col gap-3">
+                                                                        {playlists.map(playlist => (
+                                                                            <div key={playlist.id} className="text-gray-100">
+                                                                                <div className="ml-4 pl-2 mt-2 border-b-2">
+                                                                                    <Checkbox
+                                                                                        value={playlist.id}
+                                                                                        isSelected={selectedPlaylists.includes(playlist.id)}
+                                                                                        onChange={() => handleCheckboxChange(playlist.id)}
+                                                                                    >
+                                                                                        {playlist.nome}
+                                                                                    </Checkbox>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                        <div className="flex items-center justify-between">
+                                                                            <Button color="success" variant="bordered" onClick={fecharPopUp}>
+                                                                                Cancelar
+                                                                            </Button>
+                                                                            <Button color="success" variant="bordered" onClick={() => {
+                                                                                selectedPlaylists.forEach(playlistId => handleAdicionarMidia(playlistId, musica.id));
+                                                                                fecharPopUp();
+                                                                            }}>
+                                                                                Adicionar
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </dialog>
+                                                            <img src={`${baseURL}/uploads/${d}`} alt={musica.titulo} className="w-full h-[220px]" />
+                                                            <div className="flex justify-between items-center">
+                                                                <strong className="font-semibold">{musica.titulo}</strong>
+                                                                <div className="flex items-center gap-2">
+                                                                    <ListPlus onClick={abrirPopUp} />
+                                                                    {(adm === 'true' || musica.userId === id) && (
+                                                                        <PenLine onClick={(event) => handleEdit(event, musica.id)} />
+                                                                    )}
+                                                                </div>
+                                                            
+                                                            </div>
+                                                            <span className="text-sm text-zinc-400">{musica.historia}</span>
+                                                        </div>
+                                                    )})}
                                         </div>
-                                    )})}
+                                    </>
+                                
+                            }
+                                {selectedOption === 'videos' && 
+                                    
+                                        <>
+                                            <h2 className="font-semibold text-2xl mt-10">Vídeos</h2>
+                                            <div className="grid grid-cols-3 gap-4 mt-4">
+                                                
+                                                {videos.map(video => {
+
+                                                    const [c, d] = video.capa.split("uploads/");
+
+                                                    return(
+                                                            <div key={video.id} onClick={() => handleView(video.id)} className="bg-white/5 flex flex-col gap-2 p-2 rounded hover:bg-white/10">
+                                                                <dialog ref={dialogRef} className="w-[20%] rounded-lg p-[2%]">
+                                                                    <div className="space-y-4 space-x-4 p-[2%]">
+                                                                        <div className="flex flex-col gap-3">
+                                                                            {playlists.map(playlist => (
+                                                                                <div key={playlist.id} className="text-gray-100">
+                                                                                    <div className="ml-4 pl-2 mt-2 border-b-2">
+                                                                                        <Checkbox
+                                                                                            value={playlist.id}
+                                                                                            isSelected={selectedPlaylists.includes(playlist.id)}
+                                                                                            onChange={() => handleCheckboxChange(playlist.id)}
+                                                                                        >
+                                                                                            {playlist.nome}
+                                                                                        </Checkbox>
+                                                                                    </div>
+                                                                                </div>
+                                                                            ))}
+                                                                            <div className="flex items-center justify-between">
+                                                                                <Button color="success" variant="bordered" onClick={fecharPopUp}>
+                                                                                    Cancelar
+                                                                                </Button>
+                                                                                <Button color="success" variant="bordered" onClick={() => {
+                                                                                    selectedPlaylists.forEach(playlistId => handleAdicionarMidia(playlistId, video.id));
+                                                                                    fecharPopUp();
+                                                                                }}>
+                                                                                    Adicionar
+                                                                                </Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </dialog>
+                                                                <img src={`${baseURL}/uploads/${d}`} alt={video.titulo} className="w-full h-[220px]" />
+                                                                <div className="flex justify-between items-center">
+                                                                    <strong className="font-semibold">{video.titulo}</strong>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <ListPlus onClick={abrirPopUp} />
+                                                                        {(adm === 'true' || video.userId === id) && (
+                                                                            <PenLine onClick={(event) => handleEdit(event, video.id)} />
+                                                                        )}
+                                                                    </div>
+                                                                
+                                                                </div>
+                                                                <span className="text-sm text-zinc-400">{video.historia}</span>
+                                                            </div>
+                                                        )})}
+                                            </div>
+                                        </>
+                                    
+                                }
+                            </div>
                         </div>
+                        
                     </main>
                     { (visible) && (
                         <div className="w-[23%] p-2 pt-0 pr-0 space-y-2">

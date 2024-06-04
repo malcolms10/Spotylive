@@ -51,12 +51,12 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-second h-screen space-y-[2%]">
+    <div className="bg-second h-max space-y-[5%] pb-[5%]">
       <header className="bg-primary w-full p-[2%]">
         <Image src={l} alt="logo" height={50} className="ml-[2%]"></Image>
       </header>
       <div className="flex justify-center">
-        <div className="bg-primary rounded-md w-[50%] flex justify-center items-center p-[9%]">
+        <div className="bg-primary rounded-md w-[50%] flex justify-center items-center p-[9%] mb-[2%]">
           <div className="flex-row justify-center items-center space-y-4">
             <h1 className="text-3xl font-semibold">Iniciar sessão no Spotify</h1>
             <hr />
@@ -72,7 +72,6 @@ export default function Home() {
               <div>
                 {isError}
               </div>
-                
                   <button className="text-black text-lg font-bold bg-green-500 rounded-full p-3 w-full">
                     Iniciar sessão
                   </button>
