@@ -62,23 +62,23 @@ export async function commentsRoutes(app:FastifyInstance) {
     })
 
     app.delete('/comments/:midiaId', async (request, reply) => {
-    const paramsSchema = z.object({
-        midiaId: z.string(),
-    });
-    
-    try {
-        const { midiaId } = paramsSchema.parse(request.params);
-        
-        const coment = await prisma.comment.findMany({
-        where: {
-            midiaId,
-        },
-        });
-        await prisma.comment.deleteMany({ where: { midiaId } })
-        return { message: 'Comentário excluído com sucesso' };
-    } catch (error) {
-        reply.status(404).send({ error: 'Comentário não encontrado' });
-    }
+      const paramsSchema = z.object({
+          midiaId: z.string(),
+      });
+      
+      try {
+          const { midiaId } = paramsSchema.parse(request.params);
+          
+          const coment = await prisma.comment.findMany({
+          where: {
+              midiaId,
+          },
+          });
+          await prisma.comment.deleteMany({ where: { midiaId } })
+          return { message: 'Comentário excluído com sucesso' };
+      } catch (error) {
+          reply.status(404).send({ error: 'Comentário não encontrado' });
+      }
     });
 
 }

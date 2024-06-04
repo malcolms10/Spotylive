@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
+import { removerMidiaDeTodasPlaylists } from "./crontroller";
 //import { compre } from "./compre";
 
 export async function midiasRoutes(app: FastifyInstance) {
@@ -342,7 +343,10 @@ export async function midiasRoutes(app: FastifyInstance) {
     });
 
     try {
+
       const { id } = paramsSchema.parse(request.params);
+
+      await removerMidiaDeTodasPlaylists(id)
 
       const midia = await prisma.midia.findUniqueOrThrow({
         where: {

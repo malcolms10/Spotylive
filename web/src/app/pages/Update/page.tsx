@@ -8,17 +8,23 @@ import { useRouter } from 'next/navigation'
 import { BiImageAdd, BiSolidArrowToBottom } from "react-icons/bi";
 import ImagePicker from "@/components/ImagePicker";
 import {api, baseURL} from '../../lib/api'
+import { AudioPicker } from "@/components/AudioPicker";
+import { VideoPicker } from "@/components/VideoPicker";
 
 export default function UpdateMidia() {
 
     const [id,setId] =useState()
     const [titulo,setTitulo] = useState('')
+    const [user,setUser] = useState('')
     const [autor,setAutor] = useState('')
     const [historia,setHistoria] = useState('')
     const [grupo,setGrupo] = useState('')
     const [compo,setCompo] = useState('')
     const [editor,setEditor] = useState('')
     const [state,setState] = useState('')
+    const [tipo,setTipo] = useState('')
+    const [checkbox1, setCheckbox1] = useState(false);
+    const [checkbox2, setCheckbox2] = useState(false);
     const [capa,setCapa] = useState()
     const [isLoading, setIsLoading] = useState(false);
     const [email,setEmail] = useState('')
@@ -49,6 +55,18 @@ export default function UpdateMidia() {
         setGrupo(event.target.value)
     }
 
+    const handleCheckbox1 = () => {
+        setCheckbox2(checkbox1);
+        setCheckbox1(!checkbox1);
+        setTipo('audio')
+    };
+
+    const handleCheckbox2 = () => {
+        setCheckbox1(checkbox2);
+        setCheckbox2(!checkbox2);
+        setTipo('video')
+    };
+
     function handleCancel() {
         localStorage.removeItem('midia')
         router.push('/pages/Home')
@@ -68,6 +86,7 @@ export default function UpdateMidia() {
             setHistoria(response.data.historia);
             setAutor(response.data.autor)
             setId(response.data.id);
+            setUser(response.data.userId)
         }).catch(error => {
             console.log(error)
         })
@@ -91,25 +110,64 @@ export default function UpdateMidia() {
         setIsLoading(true);
         setState("Aguarde enquanto a sua mídia é editada")
 
-        await api.put(`midias/${id}`,
+        await api.delete(`comments/${id}`)
+        
+        await api.delete(`midias/${id}`)
+
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        
+        const imleToUpload = formData.get('capa')
+        let coverUrl = ''
+
+        if (imleToUpload) {
+        const uploadFormData = new FormData()
+
+        uploadFormData.set('capa', imleToUpload)
+
+        const uploadResponse = await api.post('/upload', uploadFormData)
+
+        coverUrl = uploadResponse.data.fileUrl
+        }
+
+        let a = ''
+
+        if (tipo==="video") {
+            a = "video"
+        }
+        else
+            a = "audio"
+
+        const fileToUpload = formData.get(a)
+
+        let fileUrl = ''
+
+        if (fileToUpload) {
+        const uploadFormData = new FormData()
+
+        uploadFormData.set('file', fileToUpload)
+
+        const uploadResponse = await api.post('/upload', uploadFormData)
+
+        fileUrl = uploadResponse.data.fileUrl
+        }
+
+        console.log(user)
+
+        await api.post('/midias',
         {
-          
-          titulo: titulo,
-          autor: autor,
-          grupo: grupo,
-          compositor: compo,
-          editora: editor,
-          historia: historia,
+          capa: coverUrl,
+          path: fileUrl,
+          titulo: formData.get('titulo'),
+          autor: formData.get('autor'),
+          grupo: formData.get('grupo'),
+          compositor: formData.get('compositor'),
+          editora: formData.get('editor'),
+          historia: formData.get('historia'),
+          tipo: tipo,
+          userId: user
         })
-
-        setTitulo('');
-        setGrupo('');
-        setCompo('');
-        setEditor('');
-        setHistoria('');
-        setAutor('')
-
-        localStorage.removeItem('midia')
         
         // Definir o atraso para 15 segundos (15000 milissegundos)
         const delayInMilliseconds = 15000; // 15 segundos
@@ -119,7 +177,7 @@ export default function UpdateMidia() {
             router.push('/pages/Home');
         }, delayInMilliseconds);
         
-        setState("Mídia actualizada")
+        setState("Upload Completo")
         setIsLoading(false);
         
         // Lembre-se de limpar o timer ao desmontar o componente para evitar vazamentos de memória
@@ -147,8 +205,11 @@ export default function UpdateMidia() {
                         <h2 className="font-semibold text-2xl mt-10 flex justify-center">Edite os dados da mídia aqui</h2>
                         <form onSubmit={handleUpdateMedia}>
                             <div className="flex justify-center p-[50px] space-x-20 border-gray-100 border-1 rounded-sm">
-                                <div className="w-[50%]">    
-                                    <img src={`${baseURL}/uploads/${capa}`} alt=""/>
+                                <div className="">
+                                    <label htmlFor="capa" className="flex h-10 w-10 justify-center items-center hover:bg-zinc-700">
+                                    <BiImageAdd size={60}/>
+                                    </label>
+                                    <ImagePicker/>
                                 </div>
                                 
                                 <div className="flex-col">
@@ -187,6 +248,28 @@ export default function UpdateMidia() {
                                         htmlFor="historia">
                                         </label>
                                         <textarea name="historia" rows="5" cols="50" onChange={handleHistory} value={historia} placeholder="História" className="w-[100%] rounded-md pl-2 h-20 mb-4 outline-none"></textarea>
+                                    </div>
+                                    <div className="space-x-4">
+                                        <label className="rounded-lg p-2">
+                                            <input className="mr-2" type="checkbox" id="checkbox1" onClick={handleCheckbox1} checked={checkbox1}/>
+                                            Música
+                                        </label>
+                                        <label className="rounded-lg p-2">
+                                            <input className="mr-2" type="checkbox" id="checkbox2" onClick={handleCheckbox2} checked={checkbox2}/>
+                                            Vídeo
+                                        </label>
+                                    </div>
+                                    <div className="mt-6 mb-6">
+                                        {checkbox1 ? 
+                                            (<div>
+                                                <label htmlFor="audio" className="text-gray-100 border-gray-100 border-2 rounded-lg p-3 flex space-x-2 w-64 justify-center hover:border-green-600 hover:text-gray-50">Adicione aqui a sua música <BiSolidArrowToBottom size={20}/></label>
+                                                <AudioPicker></AudioPicker>
+                                            </div>) 
+                                            :
+                                            (<div>
+                                                <label htmlFor="video" className="text-gray-100 border-gray-100 border-2 rounded-lg p-3 flex space-x-2 w-64 justify-center hover:border-green-600 hover:text-gray-50">Adicione aqui o seu vídeo    <BiSolidArrowToBottom size={20}/></label>
+                                                <VideoPicker></VideoPicker>
+                                            </div>) }    
                                     </div>
                                     <div className="space-x-2">
                                         <button className="text-gray-100 border-2 border-gray-200 rounded-xl w-[40%] p-2 hover:border-green-600 hover:text-green-600" onClick={handleCancel}> Cancelar </button>

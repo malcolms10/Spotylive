@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
-import { adicionarMidiaNaPlaylist } from "./addPlaylist";
+import { adicionarMidiaNaPlaylist } from "./crontroller";
 
 export async function playlistsRoutes(app:FastifyInstance) {
     
@@ -78,8 +78,6 @@ export async function playlistsRoutes(app:FastifyInstance) {
       const { playlistId, midiaId } = req.body;
     
       try {
-        // Aqui você pode chamar a função adicionarMidiaNaPlaylist
-        // passando os parâmetros playlistId e midiaId
         await adicionarMidiaNaPlaylist(playlistId, midiaId);
     
         res.status(200).json({ message: 'Mídia adicionada à playlist com sucesso.' });

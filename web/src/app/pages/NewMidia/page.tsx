@@ -137,10 +137,10 @@ export default function NewMidia() {
           userId: user
         })
         
-        // Definir o atraso para 30 segundos (60000 milissegundos)
-        const delayInMilliseconds = 30000; // 30 segundos
+        // Definir o atraso para 15 segundos (15000 milissegundos)
+        const delayInMilliseconds = 15000; // 15 segundos
 
-        // Agendar a execução do redirecionamento após 30 segundos
+        // Agendar a execução do redirecionamento após 15 segundos
         const timerId = setTimeout(() => {
             router.push('/pages/Home');
         }, delayInMilliseconds);
