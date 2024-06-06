@@ -52,10 +52,21 @@ export default function Search() {
     };
 
     const handleBring = () => {
-        setVisible(true)
-        const midiasFiltradas = midias.filter((midia) => midia.titulo.toLowerCase() === search.toLowerCase())
-        setMidiaF(midiasFiltradas)
-    }
+        setVisible(true);
+        const searchLower = search.toLowerCase();
+      
+        // Filtrar mídias que correspondam a qualquer uma das propriedades: título, autor, editora, compositor ou grupo
+        const midiasFiltradas = midias.filter((midia) =>
+          midia.titulo.toLowerCase().includes(searchLower) ||
+          midia.autor.toLowerCase().includes(searchLower) ||
+          midia.editora.toLowerCase().includes(searchLower) ||
+          midia.compositor.toLowerCase().includes(searchLower) ||
+          midia.grupo.toLowerCase().includes(searchLower)
+        );
+      
+        setMidiaF(midiasFiltradas);
+    };
+      
 
     const handleSearch = (event) => {
         setSearch(event.target.value);
