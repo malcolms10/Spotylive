@@ -51,7 +51,7 @@ export default function Radio() {
     }
 
     async function loadMidia(str) {
-        await api.get(`midias/${str}`).
+        await api.get(`midias/${str}/${uId}`).
         then(async response => {
 
             const [c, d] = response.data.path.split("uploads/");

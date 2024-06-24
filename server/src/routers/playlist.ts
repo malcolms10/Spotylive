@@ -6,19 +6,25 @@ import { adicionarMidiaNaPlaylist } from "./crontroller";
 export async function playlistsRoutes(app:FastifyInstance) {
     
     app.get('/playlist', async (request) => {
-        const playlists = await prisma.playlist.findMany({
-          orderBy: {
-            nome: 'asc',
-          },
-        })
-        return playlists.map((playlist) => {
-          return {
-            id: playlist.id,
-            nome:playlist.nome,
-            userId:playlist.userId   
-          }
-        })
-    })
+      const playlists = await prisma.playlist.findMany({
+        orderBy: {
+          nome: 'asc',
+        },
+        include: {
+          midias: true,  // Incluir a relação 'midias'
+        },
+      });
+    
+      return playlists.map((playlist) => {
+        return {
+          id: playlist.id,
+          nome: playlist.nome,
+          userId: playlist.userId,
+          midias: playlist.midias,  // Retornar os dados das mídias associadas
+        }
+      });
+    });
+  
 
     app.get('/playlists/pub', async (request, response) => {
       const { visibility } = request.query;
@@ -49,12 +55,22 @@ export async function playlistsRoutes(app:FastifyInstance) {
         const { userId } = paramsSchema.parse(request.params)
 
         const playlists = await prisma.playlist.findMany({
-            where: {
-              userId,
-            },
-        })
+          where: {
+            userId,
+          },
+          include: {
+            midias: true,  // Incluir a relação 'midias'
+          },
+        });
 
-        reply.send(playlists);
+        return playlists.map((playlist) => {
+          return {
+            id: playlist.id,
+            nome: playlist.nome,
+            userId: playlist.userId,
+            midias: playlist.midias,  // Retornar os dados das mídias associadas
+          }
+        });
     })
 
     app.post('/playlist', async (request) => {

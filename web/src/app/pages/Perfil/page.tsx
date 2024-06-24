@@ -77,9 +77,10 @@ export default function Perfil() {
         
         await api.get(`playlist/${id}`)
         .then(async reply =>{
-            console.log(reply.data)
             setPlaylists(reply.data)
+
         })
+
     }
 
     function turnAdmin(str) {
@@ -240,10 +241,6 @@ export default function Perfil() {
                             }       
                             
                         </div>
-                        
-                        
-                    
-                        
                     </main>
                 </div>
             </div>

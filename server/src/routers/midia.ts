@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
-import { z } from "zod";
+import { any, z } from "zod";
 import { removerMidiaDeTodasPlaylists } from "./crontroller";
 //import { compre } from "./compre";
 
@@ -14,7 +14,6 @@ export async function midiasRoutes(app: FastifyInstance) {
     reply.send(midias);
   });
 
-  //Caminho para reproduzir um vídeo
   app.get("/videos/:id", async (request, reply) => {
     const paramsSchema = z.object({
       id: z.string(),
@@ -53,7 +52,7 @@ export async function midiasRoutes(app: FastifyInstance) {
     reply.send(midias);
   });
 
-  app.get("/midias/:id", async (request, reply) => {
+  app.get("/midias/:id/:userId", async (request, reply) => {
     const paramsSchema = z.object({
       id: z.string(),
     });
