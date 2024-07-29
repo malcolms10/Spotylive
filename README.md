@@ -1,6 +1,6 @@
 O projeto apresentado traz uma plataforma digital de gestão e compartilhamento de mídias, com funcionalidades semelhantes ao Youtube e Spotify(inclusive o front-end é inspirado no do spotify além do nome). 
 
-O spotilive oferece aos usuários a possibilidade de consumir mídias online, sem a necessidade de fazer o download em seus dispositivos. Além disso, a plataforma também permite que os usuários compartilhem e carreguem seus próprios arquivos multimídia em um servidor local.
+O spotylive oferece aos usuários a possibilidade de consumir mídias online, sem a necessidade de fazer o download em seus dispositivos. Além disso, a plataforma também permite que os usuários compartilhem e carreguem seus próprios arquivos multimídia em um servidor local.
 
 Principais funcionalidades:
 
